@@ -1,0 +1,48 @@
+{
+    "objects": [
+        {
+            "objNum": 0,
+            "objId": 175,
+            "objDist": 771,
+            "angle": 3562,
+            "speed": 0,
+            "objContour": {
+                "x": -5.1097045898437500e+01,
+                "y": 7.6930493164062500e+02
+            }
+        },
+        {
+            "objNum": 1,
+            "objId": 184,
+            "objDist": 1890,
+            "angle": 0,
+            "speed": 0,
+            "objContour": {
+                "x": 0,
+                "y": 1890,
+            }
+        },
+        {
+            "objNum": 2,
+            "objId": 78,
+            "objDist": 555,
+            "angle": 3366,
+            "speed": 0,
+            "objContour": {
+                "x": -2.2041699218750000e+02,
+                "y": 5.0935385131835938e+02
+            }
+        },
+        {
+            "objNum": 3,
+            "objId": 15,
+            "objDist": 907,
+            "angle": 186,
+            "speed": 0,
+            "objContour": {
+                "x": 2.8929611206054688e+02,
+                "y": 8.5962591552734375e+02
+            }
+        }
+    ]
+}

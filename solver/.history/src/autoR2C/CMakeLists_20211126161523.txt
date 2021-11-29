@@ -1,0 +1,5 @@
+set(autoR2C_FILES
+        autoR2C.cpp
+        autoR2C.h
+        )
+add_library(autoR2C ${autoR2C_FILES})

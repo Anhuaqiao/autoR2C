@@ -1,0 +1,19 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'view', '毫米波雷达-视觉-自动标定' ]
+2 info using npm@3.5.2
+3 info using node@v8.10.0
+4 verbose config Skipping project config: /home/xiaohan/.npmrc. (matches userconfig)
+5 verbose stack Error: Invalid package.json
+5 verbose stack     at /usr/share/npm/lib/view.js:81:30
+5 verbose stack     at ReadFileContext.<anonymous> (/usr/share/npm/node_modules/read-package-json/read-json.js:79:21)
+5 verbose stack     at ReadFileContext.callback (/usr/share/npm/node_modules/graceful-fs/graceful-fs.js:76:16)
+5 verbose stack     at FSReqWrap.readFileAfterOpen [as oncomplete] (fs.js:420:13)
+6 verbose cwd /home/xiaohan/stage2.5/AutoCali/Pnpsolver_foruse
+7 error Linux 5.4.0-89-generic
+8 error argv "/usr/bin/node" "/usr/bin/npm" "view" "毫米波雷达-视觉-自动标定"
+9 error node v8.10.0
+10 error npm  v3.5.2
+11 error Invalid package.json
+12 error If you need help, you may report this error at:
+12 error     <https://github.com/npm/npm/issues>
+13 verbose exit [ 1, true ]

@@ -1,0 +1,70 @@
+{
+    "objects": [
+        {
+            "objNum": 0,
+            "objId": 15,
+            "objDist": 890,
+            "angle": 3593,
+            "speed": 0,
+            "objContour": {
+                "x": -1.0872977256774902e+01,
+                "y": 8.8993359375000000e+02
+            }
+        },
+        {
+            "objNum": 1,
+            "objId": 186,
+            "objDist": 2127,
+            "angle": 48,
+            "speed": 0,
+            "objContour": {
+                "x": 1.7798277282714844e+02,
+                "y": 2.1195402832031250e+03
+            }
+        },
+        {
+            "objNum": 2,
+            "objId": 184,
+            "objDist": 2470,
+            "angle": 0,
+            "speed": 0,
+            "objContour": {
+                "x": 0.,
+                "y": 2470.
+            }
+        },
+        {
+            "objNum": 3,
+            "objId": 210,
+            "objDist": 1684,
+            "angle": 3483,
+            "speed": 0,
+            "objContour": {
+                "x": -3.4149353027343750e+02,
+                "y": 1.6490112304687500e+03
+            }
+        },
+        {
+            "objNum": 4,
+            "objId": 165,
+            "objDist": 1746,
+            "angle": 145,
+            "speed": 0,
+            "objContour": {
+                "x": 4.3716351318359375e+02,
+                "y": 1.6903857421875000e+03
+            }
+        },
+        {
+            "objNum": 5,
+            "objId": 161,
+            "objDist": 5362,
+            "angle": 52,
+            "speed": 0,
+            "objContour": {
+                "x": 4.8597189331054688e+02,
+                "y": 5.3399321289062500e+03
+            }
+        }
+    ]
+}

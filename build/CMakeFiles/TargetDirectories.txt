@@ -1,3 +1,0 @@
-/home/xiaohan/stage3/Pnpsolver_foruse_all/solver/build/CMakeFiles/rebuild_cache.dir
-/home/xiaohan/stage3/Pnpsolver_foruse_all/solver/build/CMakeFiles/rcc.dir
-/home/xiaohan/stage3/Pnpsolver_foruse_all/solver/build/CMakeFiles/edit_cache.dir

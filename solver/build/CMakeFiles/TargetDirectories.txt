@@ -1,0 +1,3 @@
+/home/xiaohan/stage4/Pnpsolver_good_one/solver/build/CMakeFiles/rebuild_cache.dir
+/home/xiaohan/stage4/Pnpsolver_good_one/solver/build/CMakeFiles/rcc.dir
+/home/xiaohan/stage4/Pnpsolver_good_one/solver/build/CMakeFiles/edit_cache.dir
