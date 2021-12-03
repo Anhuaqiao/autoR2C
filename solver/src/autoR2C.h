@@ -16,7 +16,7 @@ private:
     vector<Point2f> pic_points;    
     vector<Point2f> pic_points_test;
 
-    Get_rd rd;
+    Get_rd rd, rd_ver;
     Mat1d rVec = Mat::zeros(3, 1, CV_64FC1);//init rvec 
     Mat1d tVec = Mat::zeros(3, 1, CV_64FC1);//init tvec
     string path_test = "../test";
@@ -26,9 +26,10 @@ private:
     string result_path_ba = "../results_ba/transformation.yaml";
 
     void get_camera_intrinsic(string path, Size& imageSize, Mat& cameraMatrix, Mat& distCoeff, int& distortion_flag);
-    void get_pic_points(string path, vector<Point2f>& pic_points, Size imageSize,  Mat cameraMatrix, Mat distCoeff, int distortion_flag);
-    void get_rad_points(string path, Get_rd& rd);
-    void verification(string path, string output_path, string result_path, Mat rVec, Mat tVec, Mat cameraMatrix, Mat distCoeff, vector<Point2f>& pic_points, Get_rd rd, Size imageSize);
+    void get_pic_points(string path, int num_pic, vector<Point2f>& pic_points, Size imageSize,  Mat cameraMatrix, Mat distCoeff, int distortion_flag);
+    void get_rad_points(string path, int num_pic, Get_rd& rd);
+    void get_rad_points_(string path, Get_rd& rd);
+    void verification(string path, string output_path, string result_path, Mat rVec, Mat tVec, Mat cameraMatrix, Mat distCoeff, vector<Point2f>& pic_points, Get_rd rd, Size imageSize, int num_pic);
 public:
     void run_calibrate();
 };

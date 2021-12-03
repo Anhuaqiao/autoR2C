@@ -43,7 +43,6 @@ void click_out_point::click(Mat frame){
             break;
             }
     }
-    // the camera will be deinitialized automatically in VideoCapture destructor
 }
 
 void click_out_point::print_point(){
@@ -86,7 +85,19 @@ double verify::error_( vector<Point2f> true_, vector<Point2f> out_){
 }
 
 
-void Get_rd::store_rd(FileNode f, string path){
+void Get_rd::store_rd(string path, int num_data){
+
+    for (size_t i=1; i<num_data+1; i++){
+        double x, y, z;
+        string filename = path + "/" + to_string(i) + ".json";
+        FileStorage jj(filename, FileStorage::READ);
+        FileNode objects = jj["objects"];
+        tie(x, y, z) = binarySearch(objects, 307, 0, objects.size());
+        loc.push_back(Point3f(x, y, z));
+    }
+}
+
+void Get_rd::store_rd_(FileNode f, string path){
 
     string path_json;
     for (FileNodeIterator it= f.begin(); it!= f.end();++it)
@@ -129,7 +140,7 @@ int Get_rd::print_rd(){
 }
 
 tuple<double, double, double> binarySearch(FileNode objects, int x, int low, int high){
-    double height_of_reflector=0.65;
+    double height_of_reflector=1.5;
     for (int i=0 ; i<objects.size(); i++)
         if( int(objects[i]["objId"]) == x) return make_tuple(floorf((float)objects[i]["objContour"]["x"])/100.0, floorf((float)objects[i]["objContour"]["y"])/100.0, height_of_reflector);
 }
@@ -192,7 +203,9 @@ int SolveBA(ba adjuster) {
         ceres::CostFunction *cost_function =
                 ReprojectAdjuster::Create(*(adjuster.get_PixelPoints(i)),
                                                  *(adjuster.get_PixelPoints(i)+1),
-                                                 adjuster.get_ObjectPoints(i));
+                                                adjuster.DistCoefficient(),
+                                                adjuster.CameraIntrin(),
+                                                adjuster.get_ObjectPoints(i));
 
         problem.AddResidualBlock(cost_function,
                                  NULL,

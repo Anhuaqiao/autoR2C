@@ -18,7 +18,7 @@ void autoR2C::get_camera_intrinsic(string path, Size& imageSize, Mat& cameraMatr
 }
 
 
-void autoR2C::get_pic_points(string path, vector<Point2f>& pic_points, Size imageSize,  Mat cameraMatrix, Mat distCoeff, int distortion_flag){
+void autoR2C::get_pic_points(string path, int num_pic, vector<Point2f>& pic_points, Size imageSize,  Mat cameraMatrix, Mat distCoeff, int distortion_flag){
     ifstream ifile;
     path_config = path + "/pic_points.txt";
     ifile.open(path_config);
@@ -34,22 +34,20 @@ void autoR2C::get_pic_points(string path, vector<Point2f>& pic_points, Size imag
     }else{
         // read all the images inside one folder, and click points of interests
         String folderpath = path;
-        vector<String> filenames;
-        cv::glob(folderpath, filenames);
         click_out_point click_it;
-        for (size_t i=0; i<filenames.size(); i++)
-        {
-            Mat img_1 = imread( filenames[i], CV_LOAD_IMAGE_COLOR );
+        for (size_t i=1; i<num_pic+1; i++)
+        {   
+            string filename = path + "/" + to_string(i) + ".jpg";
+            Mat img_1 = imread( filename, CV_LOAD_IMAGE_COLOR );
             if (distortion_flag) {
                 Eliminate(img_1, cameraMatrix, distCoeff, imageSize);// 消除畸变
             }
             // 点击角反射器中心 图片坐标系坐标
             click_it.click(img_1);
-        
     }
     destroyAllWindows;
     // click_it.print_point();
-    click_it.store_point(path);
+    click_it.store_point(path_config);
 
     pic_points = click_it.pts;
     }
@@ -57,44 +55,43 @@ void autoR2C::get_pic_points(string path, vector<Point2f>& pic_points, Size imag
         cout << i.x << " " << i.y << endl;
     }
 }
-void autoR2C::get_rad_points(string path, Get_rd& rd){
+void autoR2C::get_rad_points(string path, int num_data, Get_rd& rd){
+    rd.store_rd(path, num_data);
+    rd.print_rd();
+}
+
+void autoR2C::get_rad_points_(string path, Get_rd& rd){
     // read config yaml file
     string path_config = path +"/config.yaml";
     FileStorage f(path_config, FileStorage::READ);
     FileNode features = f["features"];
     // search and store the json data
-    cout << " got here " << endl;
-    rd.store_rd(features, path);
+    rd.store_rd_(features, path);
     rd.print_rd();
 }
 
-void autoR2C::verification(string path, string output_path, string result_path, Mat rVec, Mat tVec, Mat cameraMatrix, Mat distCoeff, vector<Point2f>& pic_points, Get_rd rd, Size imageSize){
-    string path_config = path + "/config.yaml";
-    cout << path_config << endl;
-    FileStorage f_(path_config, FileStorage::READ);
-    FileNode features_ = f_["features"];
-    Get_rd rd_ver;
-    rd_ver.store_rd(features_, path);
+
+void autoR2C::verification(string path, string output_path, string result_path, Mat rVec, Mat tVec, Mat cameraMatrix, Mat distCoeff, vector<Point2f>& pic_points, Get_rd rd, Size imageSize, int num_data){
+
     // project on to the pixel coordinate
     vector<Point2f>check_front_image_pts;
-    projectPoints( rd_ver.loc, rVec, tVec, cameraMatrix, distCoeff, check_front_image_pts );
+    projectPoints( rd.loc, rVec, tVec, cameraMatrix, distCoeff, check_front_image_pts );
 
     // draw it on images
-    String folderpath = path + "/*.jpg";
-    vector<String> filenames;
-    cv::glob(folderpath, filenames);
+    string folderpath = path;
 
     cout << " size: " << check_front_image_pts.size() << endl;
 
     int start_num=0;
-    for (int j=0; j<filenames.size(); j++)
+    for (int j=1; j<num_data; j++)
     {   
-        Mat img_ver = imread( filenames[j], CV_LOAD_IMAGE_COLOR );
-        for(int i=start_num; i < start_num + rd_ver.obj_num[j] ; i++){
+        string filename = folderpath + "/" + to_string(j) + ".jpg";
+        Mat img_ver = imread( filename, CV_LOAD_IMAGE_COLOR );
+        for(int i=start_num; i < start_num + num_data ; i++){
             cout << check_front_image_pts[i].x << " " << check_front_image_pts[i].y << endl;
             drawMarker(img_ver, check_front_image_pts[i], Scalar(0,0,255), MarkerTypes::MARKER_CROSS, 20);         
     }
-    start_num += rd_ver.obj_num[j];
+    start_num += num_data;
     std::ostringstream name;
     name << output_path << j << ".jpg";
     imwrite(name.str(), img_ver);
@@ -112,6 +109,8 @@ void autoR2C::verification(string path, string output_path, string result_path, 
     cv::eigen2cv(euler_, euler_mat);
     cout << "Euler angles: " << "\n";                                                                                                                    // * AngleAxisf(ea[2], Vector3f::UnitZ()); 
     cout << euler_(2)/DegreeToRadians <<" "<<euler_(1)/DegreeToRadians <<" "<< euler_(0)/DegreeToRadians << endl;
+    cout << "Rotation: " << "\n";
+    cout << rVec << endl;
     cout << "Translation: " << "\n";
     cout << tVec << endl;
 
@@ -119,8 +118,7 @@ void autoR2C::verification(string path, string output_path, string result_path, 
     cout << " Calibration error: " << "\n";
     cout << e << endl;
 
-
-   FileStorage fs(result_path, FileStorage::WRITE);
+    FileStorage fs(result_path, FileStorage::WRITE);
 
     fs << "cameraMatrix" << cameraMatrix;
     fs << "distCoeff" << distCoeff;
@@ -150,21 +148,24 @@ void autoR2C::verification(string path, string output_path, string result_path, 
     fs_ << "MSE" << e;
     fs_.release();
 }
-void autoR2C::run_calibrate(){
-    get_camera_intrinsic(path_config, imageSize, cameraMatrix, distCoeff, distortion_flag);
-    get_pic_points(path_train, pic_points, imageSize, cameraMatrix, distCoeff, distortion_flag);
-    get_pic_points(path_test, pic_points_test, imageSize, cameraMatrix, distCoeff, distortion_flag);
 
-    get_rad_points(path_train, rd);
+void autoR2C::run_calibrate(){
+    int num_data = 350;
+    int num_data_test = 4;
+    get_camera_intrinsic(path_config, imageSize, cameraMatrix, distCoeff, distortion_flag);
+    get_pic_points(path_train, num_data, pic_points, imageSize, cameraMatrix, distCoeff, distortion_flag);
+    get_pic_points(path_test, 1, pic_points_test, imageSize, cameraMatrix, distCoeff, distortion_flag);
+    get_rad_points(path_train, num_data, rd);
     cout << rd.loc.size() << endl;
     cout << pic_points.size() << endl;
     solvePnP(rd.loc, pic_points, cameraMatrix, distCoeff, rVec, tVec, false, CV_ITERATIVE);
     cout << rVec << endl;
     cout << tVec << endl;
-    verification(path_test, output_path, result_path, rVec, tVec, cameraMatrix, distCoeff, pic_points, rd, imageSize);
+    get_rad_points_(path_test, rd_ver);
+    verification(path_test, output_path, result_path, rVec, tVec, cameraMatrix, distCoeff, pic_points_test, rd_ver, imageSize, num_data_test);
     ba adjuster(result_path);
     SolveBA(adjuster);
     cv::Mat rvec_ba(3, 1, CV_64F, adjuster.RvecInit());
     cv::Mat tvec_ba(3, 1, CV_64F, adjuster.TvecInit());
-    verification(path_test, output_path_ba, result_path_ba, rvec_ba, tvec_ba, cameraMatrix, distCoeff, pic_points, rd, imageSize);
+    verification(path_test, output_path_ba, result_path_ba, rvec_ba, tvec_ba, cameraMatrix, distCoeff, pic_points_test, rd_ver, imageSize, num_data_test);
 }
